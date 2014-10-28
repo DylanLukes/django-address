@@ -1,3 +1,6 @@
+from __future__ import unicode_literals
+from django.utils.encoding import python_2_unicode_compatible
+
 import urllib.request, urllib.error, urllib.parse
 from django.db import models
 from django.core.exceptions import ValidationError
@@ -106,6 +109,7 @@ def to_python(value):
 ##
 ## A country.
 ##
+@python_2_unicode_compatible
 class Country(models.Model):
     name = models.CharField(max_length=40, unique=True, blank=True)
     code = models.CharField(max_length=2, blank=True) # not unique as there are duplicates (IT)
@@ -114,12 +118,13 @@ class Country(models.Model):
         verbose_name_plural = 'Countries'
         ordering = ('name',)
 
-    def __unicode__(self):
+    def __str__(self):
         return '%s'%(self.name or self.code)
 
 ##
 ## A state. Google refers to this as `administration_level_1`.
 ##
+@python_2_unicode_compatible
 class State(models.Model):
     name = models.CharField(max_length=165, blank=True)
     code = models.CharField(max_length=3, blank=True)
@@ -129,7 +134,7 @@ class State(models.Model):
         unique_together = ('name', 'country')
         ordering = ('country', 'name')
 
-    def __unicode__(self):
+    def __str__(self):
         txt = self.to_str()
         country = '%s'%self.country
         if country and txt:
@@ -143,6 +148,7 @@ class State(models.Model):
 ##
 ## A locality (suburb).
 ##
+@python_2_unicode_compatible
 class Locality(models.Model):
     name = models.CharField(max_length=165, blank=True)
     postal_code = models.CharField(max_length=10, blank=True)
@@ -153,7 +159,7 @@ class Locality(models.Model):
         unique_together = ('name', 'state')
         ordering = ('state', 'name')
 
-    def __unicode__(self):
+    def __str__(self):
         txt = '%s'%self.name
         state = self.state.to_str() if self.state else ''
         if txt and state:
@@ -170,6 +176,7 @@ class Locality(models.Model):
 ## An address. If for any reason we are unable to find a matching
 ## decomposed address we will store the raw address string in `raw`.
 ##
+@python_2_unicode_compatible
 class Address(models.Model):
     street_number = models.CharField(max_length=20, blank=True)
     route = models.CharField(max_length=100, blank=True)
@@ -184,7 +191,7 @@ class Address(models.Model):
         ordering = ('locality', 'route', 'street_number')
         unique_together = ('locality', 'route', 'street_number')
 
-    def __unicode__(self):
+    def __str__(self):
         if self.formatted != '':
             txt = '%s'%self.formatted
         elif self.locality:

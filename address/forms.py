@@ -1,3 +1,6 @@
+from __future__ import absolute_import
+import six
+
 import urllib.request, urllib.error, urllib.parse
 from django import forms
 # from uni_form.helpers import *
@@ -30,7 +33,7 @@ class AddressWidget(forms.TextInput):
             ad = {}
         elif isinstance(value, dict):
             ad = value
-        elif isinstance(value, int):
+        elif isinstance(value, six.integer_types):
             ad = Address.objects.get(pk=value)
             ad = ad.as_dict()
         else:
