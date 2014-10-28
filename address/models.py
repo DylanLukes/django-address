@@ -1,4 +1,4 @@
-import urllib2
+import urllib.request, urllib.error, urllib.parse
 from django.db import models
 from django.core.exceptions import ValidationError
 from django.db.models.fields.related import ForeignObject, ReverseSingleRelatedObjectDescriptor
@@ -23,11 +23,11 @@ def to_python(value):
 
     # If we have an integer, assume it is a model primary key. This is mostly for
     # Django being a cunt.
-    elif isinstance(value, (int, long)):
+    elif isinstance(value, int):
         return value
 
     # A string is considered a raw value.
-    elif isinstance(value, basestring):
+    elif isinstance(value, str):
         obj = Address(raw=value)
         obj.save()
         return obj
@@ -92,7 +92,7 @@ def to_python(value):
 
             # If "formatted" is empty try to construct it from other values.
             if not address_obj.formatted:
-                address_obj.formatted = unicode(address_obj)
+                address_obj.formatted = str(address_obj)
 
             # Need to save.
             address_obj.save()
@@ -115,7 +115,7 @@ class Country(models.Model):
         ordering = ('name',)
 
     def __unicode__(self):
-        return u'%s'%(self.name or self.code)
+        return '%s'%(self.name or self.code)
 
 ##
 ## A state. Google refers to this as `administration_level_1`.
@@ -131,14 +131,14 @@ class State(models.Model):
 
     def __unicode__(self):
         txt = self.to_str()
-        country = u'%s'%self.country
+        country = '%s'%self.country
         if country and txt:
-            txt += u', '
+            txt += ', '
         txt += country
         return txt
 
     def to_str(self):
-        return u'%s'%(self.name or self.code)
+        return '%s'%(self.name or self.code)
 
 ##
 ## A locality (suburb).
@@ -154,16 +154,16 @@ class Locality(models.Model):
         ordering = ('state', 'name')
 
     def __unicode__(self):
-        txt = u'%s'%self.name
+        txt = '%s'%self.name
         state = self.state.to_str() if self.state else ''
         if txt and state:
-            txt += u', '
+            txt += ', '
         txt += state
         if self.postal_code:
-            txt += u' %s'%self.postal_code
-        cntry = u'%s'%(self.state.country if self.state and self.state.country else '')
+            txt += ' %s'%self.postal_code
+        cntry = '%s'%(self.state.country if self.state and self.state.country else '')
         if cntry:
-            txt += u', %s'%cntry
+            txt += ', %s'%cntry
         return txt
 
 ##
@@ -186,20 +186,20 @@ class Address(models.Model):
 
     def __unicode__(self):
         if self.formatted != '':
-            txt = u'%s'%self.formatted
+            txt = '%s'%self.formatted
         elif self.locality:
-            txt = u''
+            txt = ''
             if self.street_number:
-                txt = u'%s'%self.street_number
+                txt = '%s'%self.street_number
             if self.route:
                 if txt:
-                    txt += u' %s'%self.route
-            locality = u'%s'%self.locality
+                    txt += ' %s'%self.route
+            locality = '%s'%self.locality
             if txt and locality:
-                txt += u', '
+                txt += ', '
             txt += locality
         else:
-            txt = u'%s'%self.raw
+            txt = '%s'%self.raw
         return txt
 
     def clean(self):
@@ -246,7 +246,7 @@ class AddressField(models.ForeignKey):
         return name, path, args, kwargs
 
     def formfield(self, **kwargs):
-        from forms import AddressField as AddressFormField
+        from .forms import AddressField as AddressFormField
         defaults = dict(form_class=AddressFormField)
         defaults.update(kwargs)
         return super(AddressField, self).formfield(**defaults)

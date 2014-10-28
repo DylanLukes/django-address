@@ -22,7 +22,7 @@ class CountryTestCase(TestCase):
         self.assertRaises(IntegrityError, Country.objects.create, name='Australia', code='**')
 
     def test_unicode(self):
-        self.assertEqual(unicode(self.au), u'Australia')
+        self.assertEqual(str(self.au), 'Australia')
 
 class StateTestCase(TestCase):
 
@@ -52,8 +52,8 @@ class StateTestCase(TestCase):
         self.assertRaises(IntegrityError, State.objects.create, name='Tasmania', country=self.au)
 
     def test_unicode(self):
-        self.assertEqual(unicode(self.vic), u'Victoria, Australia')
-        self.assertEqual(unicode(self.empty), u'Australia')
+        self.assertEqual(str(self.vic), 'Victoria, Australia')
+        self.assertEqual(str(self.empty), 'Australia')
 
 class LocalityTestCase(TestCase):
 
@@ -90,9 +90,9 @@ class LocalityTestCase(TestCase):
         self.assertRaises(IntegrityError, Locality.objects.create, name='Melbourne', state=self.au_vic)
 
     def test_unicode(self):
-        self.assertEqual(unicode(self.au_vic_mel), u'Melbourne, Victoria 3000, Australia')
-        self.assertEqual(unicode(self.au_vic_ftz), u'Fitzroy, Victoria, Australia')
-        self.assertEqual(unicode(self.au_vic_empty), u'Victoria, Australia')
+        self.assertEqual(str(self.au_vic_mel), 'Melbourne, Victoria 3000, Australia')
+        self.assertEqual(str(self.au_vic_ftz), 'Fitzroy, Victoria, Australia')
+        self.assertEqual(str(self.au_vic_empty), 'Victoria, Australia')
 
 class AddressTestCase(TestCase):
 
@@ -140,8 +140,8 @@ class AddressTestCase(TestCase):
         )
 
     def test_unicode(self):
-        self.assertEqual(unicode(self.ad1), u'1 Some Street, Melbourne, Victoria 3000, Australia')
-        self.assertEqual(unicode(self.ad_empty), u'Northcote, Victoria 3070, Australia')
+        self.assertEqual(str(self.ad1), '1 Some Street, Melbourne, Victoria 3000, Australia')
+        self.assertEqual(str(self.ad_empty), 'Northcote, Victoria 3070, Australia')
 
 class AddressFieldTestCase(TestCase):
 

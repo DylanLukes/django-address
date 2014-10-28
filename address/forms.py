@@ -1,10 +1,10 @@
-import urllib2
+import urllib.request, urllib.error, urllib.parse
 from django import forms
 # from uni_form.helpers import *
 from django.utils.safestring import mark_safe
 from djangoutils.conv import to_address
 from googlemaps import GoogleMapsError
-from models import get_or_create_address, Address
+from .models import get_or_create_address, Address
 
 import logging
 logger = logging.getLogger(__name__)
@@ -30,7 +30,7 @@ class AddressWidget(forms.TextInput):
             ad = {}
         elif isinstance(value, dict):
             ad = value
-        elif isinstance(value, (int, long)):
+        elif isinstance(value, int):
             ad = Address.objects.get(pk=value)
             ad = ad.as_dict()
         else:
@@ -49,7 +49,7 @@ class AddressWidget(forms.TextInput):
             )
         elems.append('</div>')
 
-        return mark_safe(unicode('\n'.join(elems)))
+        return mark_safe(str('\n'.join(elems)))
 
     def value_from_datadict(self, data, files, name):
         ad = dict([(c[0], data.get(name + '_' + c[0], '')) for c in self.components])
